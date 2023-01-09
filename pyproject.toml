@@ -5,6 +5,7 @@ description = "A nested command-line utility that helps you manage repositories 
 authors = ["Garrett HE <garrett.he@hotmail.com>"]
 license = "GPL-3.0"
 readme = "README.md"
+packages = [{include = "gitflux", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.7"
