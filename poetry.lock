@@ -88,6 +88,16 @@ files = [
 pycparser = "*"
 
 [[package]]
+name = "chance"
+version = "0.110"
+description = "Minimalist generator of random strings, numbers, etc."
+optional = false
+python-versions = "*"
+files = [
+    {file = "chance-0.110.tar.gz", hash = "sha256:b21944a73a7eacd3a4dfd5ba6f396de596ff9aaed0826a04d4d3bd9e9bafae63"},
+]
+
+[[package]]
 name = "charset-normalizer"
 version = "3.3.2"
 description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
@@ -636,4 +646,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7"
-content-hash = "87dedbdb5b8edf9bbf793447035c0e9bffd0683f2e90307394faa0ad92cf65f9"
+content-hash = "2859c4cf7358d0b499ca58a51e0ab4b36df24af4eb3d6d567eeb7c43ee7e202e"
