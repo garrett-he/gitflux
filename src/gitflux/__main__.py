@@ -3,6 +3,7 @@ from pathlib import Path
 
 import click
 from github import Github
+from gitflux.commands import command_group
 
 
 def init_config(ctx: click.Context, _, value: bool):
@@ -22,7 +23,7 @@ def init_config(ctx: click.Context, _, value: bool):
     ctx.exit()
 
 
-@click.command()
+@click.group(commands=command_group)
 @click.version_option(message='%(version)s')
 @click.option('--config-file', help='Path of configuration file.', type=click.Path(dir_okay=False), expose_value=True, is_eager=True, default=Path(Path.home(), '.gitfluxrc'))
 @click.option('--init-config', help='Initialize configurations.', is_flag=True, callback=init_config, expose_value=False)
