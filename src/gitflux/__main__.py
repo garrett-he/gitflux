@@ -43,4 +43,5 @@ def cli(ctx: click.Context, config_file: Path):
 
 
 if __name__ == '__main__':
+    # pylint: disable=no-value-for-parameter
     cli()
