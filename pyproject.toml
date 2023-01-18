@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gitflux"
-version = "0.2.0"
+version = "0.3.0"
 description = "A nested command-line utility that helps you manage repositories hosted on Git service providers."
 authors = ["Garrett HE <garrett.he@hotmail.com>"]
 license = "GPL-3.0"
