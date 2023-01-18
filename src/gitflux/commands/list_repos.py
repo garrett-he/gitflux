@@ -1,5 +1,5 @@
 import click
-from github import Github
+from gitflux.providers import GitServiceProvider
 
 
 @click.command('list-repos')
@@ -7,7 +7,7 @@ from github import Github
 def list_repos_command(ctx: click.Context):
     """List all remote repositories."""
 
-    github: Github = ctx.obj['github']
+    provider: GitServiceProvider = ctx.obj['provider']
 
-    for repo in github.get_user().get_repos():
+    for repo in provider.get_repos():
         click.echo(repo.full_name)
