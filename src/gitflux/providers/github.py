@@ -39,18 +39,20 @@ def parse_repo_fullname(fullname: str, user: AuthenticatedUser, orgs: list[Organ
 class GitHubService(GitServiceProvider):
     api: Github
     user: AuthenticatedUser
+    orgs: Iterable[Organization]
 
     def __init__(self, token: str):
         self.api = Github(login_or_token=token)
         self.user = self.api.get_user()
+        self.orgs = self.user.get_orgs()
 
     def get_repos(self) -> Iterable[Repository]:
         return map(convert_git_repo, self.user.get_repos())
 
     def create_repo(self, name: str, private: bool):
-        orgs = self.user.get_orgs()
-        owner, repo_name = parse_repo_fullname(name, self.user, orgs)
+        owner, repo_name = parse_repo_fullname(name, self.user, self.orgs)
         owner.create_repo(repo_name, private=private)
 
     def delete_repo(self, name: str):
-        ...
+        owner, repo_name = parse_repo_fullname(name, self.user, self.orgs)
+        owner.get_repo(repo_name).delete()

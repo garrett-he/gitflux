@@ -1,6 +1,5 @@
 import click
-from github import Github
-from gitflux.utils import parse_repo_fullname
+from gitflux.providers import GitServiceProvider
 
 
 @click.command('delete-repos')
@@ -10,27 +9,13 @@ from gitflux.utils import parse_repo_fullname
 def delete_repos_command(ctx: click.Context, names: tuple[str], **options: dict):
     """Delete existing repositories."""
 
-    github: Github = ctx.obj['github']
+    provider: GitServiceProvider = ctx.obj['provider']
 
-    user = github.get_user()
+    for name in names:
+        provider.delete_repo(name)
 
-    if options['prefix'] is None:
-        orgs = user.get_orgs()
+    if options['prefix'] is None or click.prompt(f'Delete ALL repositories with prefix: {options["prefix"]}, sure?', default='n').lower() == 'n':
+        ctx.exit()
 
-        for name in names:
-            owner, repo_name = parse_repo_fullname(name, user, orgs)
-            owner.get_repo(repo_name).delete()
-    else:
-        if options['prefix'].lower() == 'all':
-            if click.prompt(f'Delete ALL repositories of user: {user.login}, sure?', default='n').lower() == 'n':
-                ctx.exit()
-
-            repos = user.get_repos()
-        else:
-            if click.prompt(f'Delete ALL repositories with prefix: {options["prefix"]}, sure?', default='n').lower() == 'n':
-                ctx.exit()
-
-            repos = filter(lambda repo: repo.owner.login == options['prefix'], user.get_repos())
-
-        for repo in repos:
-            repo.delete()
+    for name in map(lambda repo: repo.full_name, filter(lambda repo: repo.get_prefix() == options['prefix'], provider.get_repos())):
+        provider.delete_repo(name)
