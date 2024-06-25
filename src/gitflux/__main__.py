@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import click
+from github import Github
 
 
 def init_config(ctx: click.Context, _, value: bool):
@@ -25,8 +26,19 @@ def init_config(ctx: click.Context, _, value: bool):
 @click.version_option(message='%(version)s')
 @click.option('--config-file', help='Path of configuration file.', type=click.Path(dir_okay=False), expose_value=True, is_eager=True, default=Path(Path.home(), '.gitfluxrc'))
 @click.option('--init-config', help='Initialize configurations.', is_flag=True, callback=init_config, expose_value=False)
-def cli(config_file: Path):
+@click.pass_context
+def cli(ctx: click.Context, config_file: Path):
     """A nested command-line utility that helps you manage repositories hosted on GitHub."""
+
+    ctx.ensure_object(dict)
+
+    config_file = Path(config_file)
+
+    if not config_file.is_file():
+        raise FileNotFoundError(f'Configuration file "{config_file}" not found, try with --init-config.')
+
+    config = json.loads(config_file.read_text(encoding='utf-8'))
+    ctx.obj['github'] = Github(login_or_token=config['accessToken'])
 
 
 if __name__ == '__main__':
