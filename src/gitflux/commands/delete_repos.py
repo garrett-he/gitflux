@@ -1,5 +1,6 @@
 import click
 from github import Github
+from gitflux.utils import parse_repo_fullname
 
 
 @click.command('delete-repos')
@@ -10,5 +11,9 @@ def delete_repos_command(ctx: click.Context, names: tuple[str]):
 
     github: Github = ctx.obj['github']
 
+    user = github.get_user()
+    orgs = user.get_orgs()
+
     for name in names:
-        github.get_user().get_repo(name).delete()
+        owner, repo_name = parse_repo_fullname(name, user, orgs)
+        owner.get_repo(repo_name).delete()
