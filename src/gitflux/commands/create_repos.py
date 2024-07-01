@@ -1,5 +1,6 @@
 import click
 from github import Github
+from gitflux.utils import parse_repo_fullname
 
 
 @click.command('create-repos')
@@ -12,6 +13,8 @@ def create_repos_command(ctx: click.Context, names: tuple[str], **options: dict)
     github: Github = ctx.obj['github']
 
     user = github.get_user()
+    orgs = user.get_orgs()
 
     for name in names:
-        user.create_repo(name, private=options['private'])
+        owner, repo_name = parse_repo_fullname(name, user, orgs)
+        owner.create_repo(repo_name, private=options['private'])
