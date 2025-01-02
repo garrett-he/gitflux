@@ -30,7 +30,8 @@ def cli(ctx: click.Context, profile_name: str):
         profile_file.write_text(json.dumps(profile, ensure_ascii=False, indent=4), encoding='utf-8')
         profile_file.chmod(0o600)
     else:
-        profile = json.load(profile_file.open('r', encoding='utf-8'))
+        with profile_file.open('r', encoding='utf-8') as fp:
+            profile = json.load(fp)
 
     provider_module = importlib.import_module(f'gitflux.providers.{profile["provider"]}')
 
