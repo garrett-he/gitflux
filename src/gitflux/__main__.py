@@ -10,7 +10,7 @@ from gitflux.commands import command_group
 @click.version_option(message='%(version)s')
 @click.option('-p', '--profile-name', help='Name of profile to use.', type=str, required=False, default='default')
 @click.pass_context
-def cli(ctx: click.Context, profile_name: str):
+def main(ctx: click.Context, profile_name: str):
     """A command-line utility that helps you manage repositories hosted on Git service providers."""
 
     ctx.ensure_object(dict)
@@ -40,4 +40,4 @@ def cli(ctx: click.Context, profile_name: str):
 
 if __name__ == '__main__':
     # pylint: disable=no-value-for-parameter
-    cli()
+    main()
