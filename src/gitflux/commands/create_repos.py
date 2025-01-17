@@ -1,4 +1,5 @@
 import click
+
 from gitflux.providers import GitServiceProvider
 
 
@@ -7,7 +8,9 @@ from gitflux.providers import GitServiceProvider
 @click.option('--private', help='Private repository.', is_flag=True, default=True)
 @click.pass_context
 def create_repos_command(ctx: click.Context, names: tuple[str], **options: dict):
-    """Create new repositories."""
+    """
+    Create new repositories.
+    """
 
     provider: GitServiceProvider = ctx.obj['provider']
 

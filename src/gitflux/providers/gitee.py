@@ -1,10 +1,12 @@
 from __future__ import annotations
+
 import json
 from typing import Iterable
 
 import urllib3
+
+from gitflux.core.models import Repository
 from gitflux.providers import GitServiceProvider
-from gitflux.typing import Repository
 
 
 def create_provider(token: str) -> GiteeService:

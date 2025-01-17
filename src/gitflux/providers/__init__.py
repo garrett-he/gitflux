@@ -1,7 +1,7 @@
-from typing import Iterable
 from abc import ABC, abstractmethod
+from typing import Iterable
 
-from gitflux.typing import Repository
+from gitflux.core.models import Repository
 
 
 class GitServiceProvider(ABC):

@@ -1,9 +1,10 @@
-import json
 import importlib
-from pathlib import Path
 
 import click
+
 from gitflux.commands import command_group
+from gitflux.core.config import settings
+from gitflux.core.models import Profile
 
 
 @click.group(commands=command_group)
@@ -11,31 +12,26 @@ from gitflux.commands import command_group
 @click.option('-p', '--profile-name', help='Name of profile to use.', type=str, required=False, default='default')
 @click.pass_context
 def main(ctx: click.Context, profile_name: str):
-    """A command-line utility that helps you manage repositories hosted on Git service providers."""
+    """
+    A command-line utility that helps you manage repositories hosted on Git service providers.
+    """
 
     ctx.ensure_object(dict)
 
-    profile_file = Path().home().joinpath('.config', 'gitflux', 'profiles', profile_name)
+    if profile_name not in settings.profiles:
+        click.echo(f'Profile "{profile_name}" not found, try to generate:')
 
-    if not profile_file.exists():
-        profile_file.parent.mkdir(parents=True, exist_ok=True)
+        settings.profiles[profile_name] = Profile(
+            provider=click.prompt('Provider', type=click.Choice(['github', 'gitee']), default='github'),
+            access_token=click.prompt('Access token', hide_input=True)
+        )
 
-        click.echo(f'Profile "{profile_name}" found, try to generate:')
+        settings.write()
 
-        profile = {
-            'provider': click.prompt('Provider', type=click.Choice(['github', 'gitee']), default='github'),
-            'access_token': click.prompt('Access token', hide_input=True)
-        }
+    profile = settings.profiles[profile_name]
+    provider_module = importlib.import_module(f'gitflux.providers.{profile.provider}')
 
-        profile_file.write_text(json.dumps(profile, ensure_ascii=False, indent=4), encoding='utf-8')
-        profile_file.chmod(0o600)
-    else:
-        with profile_file.open('r', encoding='utf-8') as fp:
-            profile = json.load(fp)
-
-    provider_module = importlib.import_module(f'gitflux.providers.{profile["provider"]}')
-
-    ctx.obj['provider'] = provider_module.create_provider(profile['access_token'])
+    ctx.obj['provider'] = provider_module.create_provider(profile.access_token)
 
 
 if __name__ == '__main__':

@@ -1,7 +1,10 @@
 from __future__ import annotations
+
 from typing import Iterable
+
 from github import Github, AuthenticatedUser, Organization, Repository as GitHubRepository
-from gitflux.typing import Repository
+
+from gitflux.core.models import Repository
 from gitflux.providers import GitServiceProvider
 
 
@@ -10,12 +13,10 @@ def create_provider(token: str) -> GitHubService:
 
 
 def convert_git_repo(github_repo: GitHubRepository) -> Repository:
-    repo = Repository(
+    return Repository(
         name=github_repo.name,
         full_name=github_repo.full_name
     )
-
-    return repo
 
 
 def parse_repo_fullname(fullname: str, user: AuthenticatedUser, orgs: list[Organization]) -> tuple:
