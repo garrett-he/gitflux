@@ -1,39 +1,36 @@
 import importlib
+from typing import Annotated
 
-import click
+import typer
 
-from gitflux.commands import command_group
+from gitflux.cli.repo_commands import repo_app
 from gitflux.core.config import settings
-from gitflux.core.models import Profile
+from gitflux.core.models import Profile, ProviderType
+
+app = typer.Typer()
+app.add_typer(repo_app, name='repo', help='Manage Git repositories.')
 
 
-@click.group(commands=command_group)
-@click.version_option(message='%(version)s')
-@click.option('-p', '--profile-name', help='Name of profile to use.', type=str, required=False, default='default')
-@click.pass_context
-def main(ctx: click.Context, profile_name: str):
-    """
-    A command-line utility that helps you manage repositories hosted on Git service providers.
-    """
-
+@app.callback()
+def main(
+    ctx: typer.Context,
+    profile: Annotated[str, typer.Option(help='Profile to use', metavar='NAME')] = 'default'
+):
     ctx.ensure_object(dict)
 
-    if profile_name not in settings.profiles:
-        click.echo(f'Profile "{profile_name}" not found, try to generate:')
+    if profile not in settings.profiles:
+        typer.echo(f'Profile "{profile}" not found, try to generate:')
 
-        settings.profiles[profile_name] = Profile(
-            provider=click.prompt('Provider', type=click.Choice(['github', 'gitee']), default='github'),
-            access_token=click.prompt('Access token', hide_input=True)
+        settings.profiles[profile] = Profile(
+            provider=typer.prompt('Provider', type=ProviderType, default='github'),
+            access_token=typer.prompt('Access token', hide_input=True)
         )
 
-        settings.write()
+        settings.save()
 
-    profile = settings.profiles[profile_name]
-    provider_module = importlib.import_module(f'gitflux.providers.{profile.provider}')
-
-    ctx.obj['provider'] = provider_module.create_provider(profile.access_token)
+    provider_module = importlib.import_module(f'gitflux.providers.{settings.profiles[profile].provider}')
+    ctx.obj['provider'] = provider_module.create_provider(settings.profiles[profile].access_token)
 
 
 if __name__ == '__main__':
-    # pylint: disable=no-value-for-parameter
-    main()
+    app()

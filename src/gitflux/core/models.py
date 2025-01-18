@@ -1,4 +1,5 @@
 from typing import Literal
+from enum import Enum
 
 from pydantic import BaseModel
 
@@ -14,3 +15,8 @@ class Repository(BaseModel):
 
     def get_prefix(self) -> str:
         return self.full_name[0:self.full_name.index('/')]
+
+
+class ProviderType(str, Enum):
+    github = 'github'
+    gitee = 'gitee'

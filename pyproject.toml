@@ -23,7 +23,7 @@ classifiers = [
 ]
 requires-python = ">=3.10,<3.14"
 dependencies = [
-    "click (>=8.1.3,<9.0.0)",
+    "typer (>=0.15.2,<1.0.0)",
     "pydantic (>=2.10.6,<3.0.0)",
     "pydantic-settings (>=2.8.1,<3.0.0)",
     "pygithub (>=2.6.1,<3.0.0)",
@@ -36,7 +36,7 @@ changelog = "https://github.com/garrett-he/gitflux/blob/main/CHANGELOG.md"
 issues = "https://github.com/garrett-he/gitflux/issues"
 
 [project.scripts]
-gitflux = "gitflux.__main__:main"
+gitflux = "gitflux.__main__:app"
 
 [dependency-groups]
 dev = [
