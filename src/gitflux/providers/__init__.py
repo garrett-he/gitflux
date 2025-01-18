@@ -16,3 +16,7 @@ class GitServiceProvider(ABC):
     @abstractmethod
     def delete_repo(self, name: str):
         ...
+
+    @abstractmethod
+    def archive_repo(self, name: str):
+        ...

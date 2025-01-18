@@ -1,20 +1,31 @@
+import json
 from pathlib import Path
 from typing import Dict
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
 
 from .models import Profile
 
-settings_file = Path.home() / '.config/gitflux/config.json'
+config_file = Path.home() / '.config/gitflux/config.json'
 
 
 class Settings(BaseSettings):
     profiles: Dict[str, Profile] = {}
 
-    model_config = SettingsConfigDict(json_file=settings_file)
+    @classmethod
+    def load(cls):
+        if not config_file.exists():
+            return cls()
 
-    def write(self):
-        settings_file.write_text(self.model_dump_json(indent=4))
+        data = json.load(config_file.open('r', encoding='utf-8'))
+
+        return cls(**data)
+
+    def save(self):
+        data = self.model_dump()
+        config_file.parent.mkdir(0o755, parents=True, exist_ok=True)
+
+        config_file.write_text(json.dumps(data), encoding='utf-8')
 
 
-settings = Settings()
+settings = Settings.load()

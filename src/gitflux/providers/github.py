@@ -19,7 +19,7 @@ def convert_git_repo(github_repo: GitHubRepository) -> Repository:
     )
 
 
-def parse_repo_fullname(fullname: str, user: AuthenticatedUser, orgs: list[Organization]) -> tuple:
+def parse_repo_fullname(fullname: str, user: AuthenticatedUser, orgs: Iterable[Organization]) -> tuple:
     if fullname.find('/') == -1:
         owner = user
         repo_name = fullname
@@ -57,3 +57,8 @@ class GitHubService(GitServiceProvider):
     def delete_repo(self, name: str):
         owner, repo_name = parse_repo_fullname(name, self.user, self.orgs)
         owner.get_repo(repo_name).delete()
+
+    def archive_repo(self, name: str):
+        owner, repo_name = parse_repo_fullname(name, self.user, self.orgs)
+        owner.get_repo(repo_name).edit(archived=True)
+
